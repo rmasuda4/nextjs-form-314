@@ -12,6 +12,7 @@ import {
   hobbyKeys,
   levelKeys,
   majorKeys,
+  instructorKeys,
   gpaValues,
   ICreateStudentForm,
 } from '@/lib/validationSchemas';
@@ -35,6 +36,7 @@ const CreateStudentForm = () => {
     level: string;
     gpa: number;
     major?: string | undefined;
+    instructor?: string | undefined;
     name: string;
     hobbies?: (string | undefined)[] | undefined;
     enrolled?: Date | undefined;
@@ -188,6 +190,28 @@ const CreateStudentForm = () => {
                 <div className="invalid-feedback">{errors.major?.message}</div>
                 <Form.Text>What is your major?</Form.Text>
               </Form.Group>
+            </Row>
+            <Row className={formPadding}>
+              <Col>
+                <Form.Group controlId="formInstructor">
+                  <Form.Label>
+                    Instructor
+                    <Form.Text style={{ color: 'red' }}>*</Form.Text>
+                  </Form.Label>
+                  <Form.Select
+                    {...register('instructor')}
+                    className={`form-control ${errors.instructor ? 'is-invalid' : ''}`}
+                  >
+                    {instructorKeys.map((instructor) => (
+                      <option key={instructor} value={instructor}>
+                        {instructor}
+                      </option>
+                    ))}
+                  </Form.Select>
+                  <div className="invalid-feedback">{errors.instructor?.message}</div>
+                  <Form.Text muted>Who is your instructor?</Form.Text>
+                </Form.Group>
+              </Col>
             </Row>
             <Button variant="primary" type="submit">
               Submit

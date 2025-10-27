@@ -6,6 +6,7 @@ import {
   hobbyKeys,
   levelKeys,
   majorKeys,
+  instructorKeys,
   gpaValues,
 } from '@/lib/validationSchemas';
 import { Button, ButtonGroup, Card, Col, Container, Form, Row } from 'react-bootstrap';
@@ -16,7 +17,7 @@ import { upsertStudent } from '@/lib/dbActions';
 import swal from 'sweetalert';
 
 const EditStudentForm = ({ student }: { student: ICreateStudentForm }) => {
-  console.log('EditStudentForm: ', student.email, student); // Show client-side email.
+  console.log('EditStudentForm: ', student.email, student);
   const formPadding = 'py-1';
 
   const {
@@ -34,8 +35,13 @@ const EditStudentForm = ({ student }: { student: ICreateStudentForm }) => {
   if (!watchMajor) {
     watchMajor = student.major;
   }
+
+  let watchInstructor = watch('instructor');
+  if (!watchInstructor) {
+    watchInstructor = student.instructor;
+  }
+
   const enrolledDateString = student.enrolled?.toISOString().split('T')[0];
-  // console.log('EditStudentForm: ', enrolledDateString);
 
   const onSubmit = async (data: {
     email: string;
@@ -43,6 +49,7 @@ const EditStudentForm = ({ student }: { student: ICreateStudentForm }) => {
     level: string;
     gpa: number;
     major?: string | undefined;
+    instructor?: string | undefined;
     name: string;
     hobbies?: (string | undefined)[] | undefined;
     enrolled?: Date | undefined;
@@ -87,6 +94,27 @@ const EditStudentForm = ({ student }: { student: ICreateStudentForm }) => {
                   <Form.Control type="email" value={student.email} disabled />
                 </Form.Group>
               </Col>
+              <Col>
+                <Form.Group controlId="formInstructor">
+                  <Form.Label>
+                    Instructor
+                    <Form.Text style={{ color: 'red' }}>*</Form.Text>
+                  </Form.Label>
+                  <Form.Select
+                    defaultValue={student.instructor}
+                    {...register('instructor')}
+                    className={`form-control ${errors.instructor ? 'is-invalid' : ''}`}
+                  >
+                    {instructorKeys.map((instructor) => (
+                      <option key={instructor} value={instructor}>
+                        {instructor}
+                      </option>
+                    ))}
+                  </Form.Select>
+                  <div className="invalid-feedback">{errors.instructor?.message}</div>
+                  <Form.Text muted>Who is your instructor?</Form.Text>
+                </Form.Group>
+              </Col>
             </Row>
             <Row className={formPadding}>
               <Form.Group controlId="formBio">
@@ -108,11 +136,7 @@ const EditStudentForm = ({ student }: { student: ICreateStudentForm }) => {
                     className={`form-control ${errors.level ? 'is-invalid' : ''}`}
                   >
                     {levelKeys.map((level) => (
-                      <option
-                        key={level}
-                        value={level}
-                        // selected={student.level === level}
-                      >
+                      <option key={level} value={level}>
                         {level}
                       </option>
                     ))}
@@ -129,11 +153,7 @@ const EditStudentForm = ({ student }: { student: ICreateStudentForm }) => {
                   </Form.Label>
                   <Form.Select {...register('gpa')} defaultValue={student.gpa}>
                     {gpaValues.map((gpa, index) => (
-                      <option
-                        key={gpa}
-                        value={index}
-                        // selected={student.gpa === index}
-                      >
+                      <option key={gpa} value={index}>
                         {gpa}
                       </option>
                     ))}
